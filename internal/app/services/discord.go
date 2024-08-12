@@ -40,3 +40,7 @@ func (service *DiscordService) BotExists(guildId string) bool {
 func (service *DiscordService) GetCurrentAuthInfo(accessToken string) (*domain.AuthInfo, error) {
 	return service.discordApiBridge.GetCurrentAuthInfo(accessToken)
 }
+
+func (service *DiscordService) GetTokenByCode(code string) (string, error) {
+	return service.discordApiBridge.GetTokenByCode(code)
+}

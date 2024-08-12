@@ -11,6 +11,7 @@ type DiscordService interface {
 	GetCurrentUserGuilds(accessToken string) ([]*domain.UserGuild, error)
 	BotExists(guildId string) bool
 	GetCurrentAuthInfo(accessToken string) (*domain.AuthInfo, error)
+	GetTokenByCode(code string) (string, error)
 }
 
 type DiscordApiBridge interface {
@@ -19,6 +20,7 @@ type DiscordApiBridge interface {
 	GetCurrentUserGuilds(accessToken string) ([]*domain.UserGuild, error)
 	CurrentUserIsGuildAdmin(accessToken, guildId string) bool
 	GetCurrentAuthInfo(accessToken string) (*domain.AuthInfo, error)
+	GetTokenByCode(code string) (string, error)
 }
 
 type DiscordBotBridge interface {

@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/orewaee/ticket-box/internal/app/domain"
+	"github.com/orewaee/ticket-box/internal/config"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 )
 
 type ApiBridge struct {
@@ -175,4 +178,44 @@ func (bridge *ApiBridge) GetCurrentAuthInfo(accessToken string) (*domain.AuthInf
 			AvatarUrl: avatarUrl,
 		},
 	}, nil
+}
+
+func (bridge *ApiBridge) GetTokenByCode(code string) (string, error) {
+	cfg := config.Get()
+
+	values := url.Values{}
+	values.Set("grant_type", "authorization_code")
+	values.Set("code", code)
+	values.Set("redirect_uri", cfg.RedirectUri)
+	values.Set("client_id", cfg.ClientId)
+	values.Set("client_secret", cfg.ClientSecret)
+
+	body := strings.NewReader(values.Encode())
+	request, err := http.NewRequest(http.MethodPost, "https://discord.com/api/oauth2/token", body)
+	if err != nil {
+		return "", nil
+	}
+
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	response, err := bridge.httpClient.Do(request)
+	if err != nil {
+		return "", err
+	}
+
+	bytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+
+	data := new(tokenResponse)
+	if err := json.Unmarshal(bytes, data); err != nil {
+		return "", err
+	}
+
+	if data.Error != "" {
+		return "", errors.New(data.Error)
+	}
+
+	return data.AccessToken, nil
 }

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   id: string
   name: string
   iconUrl: string
   withBot: boolean
-}>()
+}>();
 </script>
 
 <template>
   <div class="guild">
-    <img class="icon" draggable="false" :src="props.iconUrl" alt="icon">
+    <img class="icon" draggable="false" :src="iconUrl" alt="icon">
     <div class="info">
-      <h4>{{props.name}}</h4>
-      <p v-if="props.withBot" class="ready">Ready</p>
+      <h4>{{name}}</h4>
+      <p v-if="withBot" class="ready">Ready</p>
       <p v-else class="need-a-bot">Need a bot</p>
     </div>
   </div>

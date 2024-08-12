@@ -8,9 +8,11 @@ import (
 )
 
 type Config struct {
+	Token        string `yaml:"token" env:"TOKEN"`
 	RedirectUri  string `yaml:"redirect-uri" env:"REDIRECT_URI"`
 	ClientId     string `yaml:"client-id" env:"CLIENT_ID"`
 	ClientSecret string `yaml:"client-secret" env:"CLIENT_SECRET"`
+	Addr         string `yaml:"addr" env:"ADDR"`
 }
 
 var config = new(Config)

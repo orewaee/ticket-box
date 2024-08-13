@@ -9,7 +9,6 @@ import (
 	"github.com/orewaee/ticket-box/internal/utils"
 	"io"
 	"net/http"
-	"strings"
 )
 
 type PostTopicHandler struct {
@@ -26,16 +25,9 @@ func NewPostTopicHandler(topicService ports.TopicService, discordService ports.D
 
 // POST /topic
 func (handler *PostTopicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
-	authorization := request.Header.Get("Authorization")
-	if authorization == "" {
-		writer.WriteHeader(http.StatusUnauthorized)
-		utils.WriteString(writer, "missing token")
-		return
-	}
-
-	accessToken := strings.TrimPrefix(authorization, "Bearer ")
+	accessToken := request.Context().Value("accessToken").(string)
 
 	bytes, err := io.ReadAll(request.Body)
 	if err != nil {
@@ -75,6 +67,22 @@ func (handler *PostTopicHandler) ServeHTTP(writer http.ResponseWriter, request *
 		return
 	}
 
+	data := &dto.Topic{
+		Id:          newTopic.Id,
+		GuildId:     newTopic.GuildId,
+		Emoji:       newTopic.Emoji,
+		Name:        newTopic.Name,
+		Description: newTopic.Description,
+	}
+
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		utils.WriteString(writer, err.Error())
+		return
+	}
+
 	writer.WriteHeader(http.StatusCreated)
-	utils.WriteString(writer, id)
+	writer.Header().Set("Content-Type", "application/json")
+	utils.WriteBytes(writer, dataBytes)
 }

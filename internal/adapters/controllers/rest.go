@@ -27,9 +27,13 @@ func NewRestController(addr string, topicService ports.TopicService, discordServ
 	mux.Handle("GET /guilds", AuthMiddleware(handlers.NewGetGuildsHandler(discordService), discordService))
 	mux.Handle("OPTIONS /guilds", handlers.NewOptionsGuildsHandler())
 
-	mux.Handle("POST /topic", handlers.NewPostTopicHandler(topicService, discordService))
 	mux.Handle("GET /topic/{topic_id}", handlers.NewGetTopicHandler(topicService, discordService))
-	mux.Handle("GET /topics/{guild_id}", handlers.NewGetTopicsHandler(topicService, discordService))
+
+	mux.Handle("GET /topics/{guild_id}", AuthMiddleware(handlers.NewGetTopicsHandler(topicService, discordService), discordService))
+	mux.Handle("OPTIONS /topics/{guild_id}", handlers.NewOptionsTopicsHandler())
+
+	mux.Handle("POST /topic", AuthMiddleware(handlers.NewPostTopicHandler(topicService, discordService), discordService))
+	mux.Handle("OPTIONS /topic", handlers.NewOptionsTopicHandler())
 
 	httpServer := &http.Server{
 		Addr:         addr,

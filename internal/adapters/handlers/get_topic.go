@@ -6,7 +6,6 @@ import (
 	"github.com/orewaee/ticket-box/internal/dto"
 	"github.com/orewaee/ticket-box/internal/utils"
 	"net/http"
-	"strings"
 )
 
 type GetTopicHandler struct {
@@ -23,19 +22,12 @@ func NewGetTopicHandler(topicService ports.TopicService, discordService ports.Di
 
 // GET /topic/{topic_id}
 func (handler *GetTopicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
 	topicId := request.PathValue("topic_id")
 	if topicId == "" {
 		writer.WriteHeader(http.StatusBadRequest)
 		utils.WriteString(writer, "missing topic_id")
-		return
-	}
-
-	authorization := request.Header.Get("Authorization")
-	if authorization == "" {
-		writer.WriteHeader(http.StatusUnauthorized)
-		utils.WriteString(writer, "missing token")
 		return
 	}
 
@@ -46,7 +38,7 @@ func (handler *GetTopicHandler) ServeHTTP(writer http.ResponseWriter, request *h
 		return
 	}
 
-	accessToken := strings.TrimPrefix(authorization, "Bearer ")
+	accessToken := request.Context().Value("accessToken").(string)
 	isAdmin := handler.discordService.CurrentUserIsGuildAdmin(accessToken, topic.GuildId)
 
 	if !isAdmin {

@@ -34,3 +34,17 @@ export interface GuildsState {
     error: boolean
     loading: boolean
 }
+
+export interface Topic {
+    id: string
+    guild_id: string
+    emoji: string
+    name: string
+    description: string
+}
+
+export interface TopicsState {
+    topics: Topic[] | null
+    error: boolean
+    loading: boolean
+}

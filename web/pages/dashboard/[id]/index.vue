@@ -27,7 +27,7 @@ onMounted(async () => {
           <p class="active">{{guildState.name}}</p>
         </div>
         <h1>Config</h1>
-        <a v-if="!(guildState.guild as Guild).with_bot" href="https://discord.com/oauth2/authorize?client_id=1207683042680897629&permissions=8&integration_type=0&scope=bot+applications.commands">
+        <a href="https://discord.com/oauth2/authorize?client_id=1207683042680897629&permissions=8&integration_type=0&scope=bot+applications.commands" v-if="!(guildState.guild as Guild).with_bot">
           <ConfigOption title="Add a bot to the server" description="There is no bot on this server, invite a bot to get started">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--foreground-100)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up-right">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -36,6 +36,17 @@ onMounted(async () => {
             </svg>
           </ConfigOption>
         </a>
+
+        <NuxtLink :to="'/dashboard/' + guildState.id + '/topics'" v-if="(guildState.guild as Guild).with_bot">
+          <ConfigOption title="Topics" description="List of guild topics">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--foreground-100)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M5 12l14 0" />
+              <path d="M13 18l6 -6" />
+              <path d="M13 6l6 6" />
+            </svg>
+          </ConfigOption>
+        </NuxtLink>
       </div>
     </LoadingLayout>
   </AuthLayout>

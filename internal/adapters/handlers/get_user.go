@@ -20,8 +20,6 @@ func NewGetUserHandler(discordService ports.DiscordService) *GetUserHandler {
 
 // GET /user
 func (handler *GetUserHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	id := request.Context().Value("id").(string)
 	accessToken := request.Context().Value("accessToken").(string)
 

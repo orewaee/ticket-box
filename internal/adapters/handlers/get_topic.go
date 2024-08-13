@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/orewaee/ticket-box/internal/app/ports"
 	"github.com/orewaee/ticket-box/internal/dto"
 	"github.com/orewaee/ticket-box/internal/utils"
@@ -22,8 +23,6 @@ func NewGetTopicHandler(topicService ports.TopicService, discordService ports.Di
 
 // GET /topic/{topic_id}
 func (handler *GetTopicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	topicId := request.PathValue("topic_id")
 	if topicId == "" {
 		writer.WriteHeader(http.StatusBadRequest)
@@ -31,12 +30,16 @@ func (handler *GetTopicHandler) ServeHTTP(writer http.ResponseWriter, request *h
 		return
 	}
 
+	fmt.Println(topicId)
+
 	topic, err := handler.topicService.GetTopicById(topicId)
 	if err != nil {
 		writer.WriteHeader(http.StatusNotFound)
 		utils.WriteString(writer, "topic not found")
 		return
 	}
+
+	fmt.Println(topic)
 
 	accessToken := request.Context().Value("accessToken").(string)
 	isAdmin := handler.discordService.CurrentUserIsGuildAdmin(accessToken, topic.GuildId)

@@ -22,8 +22,6 @@ func NewGetTopicsHandler(topicService ports.TopicService, discordService ports.D
 
 // GET /topics/{guild_id}
 func (handler *GetTopicsHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	guildId := request.PathValue("guild_id")
 	if guildId == "" {
 		writer.WriteHeader(http.StatusBadRequest)

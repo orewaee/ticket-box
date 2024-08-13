@@ -20,8 +20,6 @@ func NewGetGuildHandler(discordService ports.DiscordService) *GetGuildHandler {
 
 // GET /guild/{guild_id}
 func (handler *GetGuildHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	guildId := request.PathValue("guild_id")
 	if guildId == "" {
 		writer.WriteHeader(http.StatusBadRequest)

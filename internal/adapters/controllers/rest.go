@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/orewaee/ticket-box/internal/adapters/cors"
 	"github.com/orewaee/ticket-box/internal/adapters/handlers"
 	"github.com/orewaee/ticket-box/internal/app/ports"
 	"net/http"
@@ -18,22 +19,29 @@ func NewRestController(addr string, topicService ports.TopicService, discordServ
 
 	mux.Handle("GET /token", handlers.NewGetTokenHandler(discordService))
 
-	mux.Handle("GET /user", AuthMiddleware(handlers.NewGetUserHandler(discordService), discordService))
-	mux.Handle("OPTIONS /user", handlers.NewOptionsUserHandler())
+	mux.Handle("GET /user", cors.Middleware(AuthMiddleware(
+		handlers.NewGetUserHandler(discordService), discordService)))
+	mux.Handle("OPTIONS /user", cors.NewOptionsHandler())
 
-	mux.Handle("GET /guild/{guild_id}", AuthMiddleware(handlers.NewGetGuildHandler(discordService), discordService))
-	mux.Handle("OPTIONS /guild/{guild_id}", handlers.NewOptionsGuildHandler())
+	mux.Handle("GET /guild/{guild_id}", cors.Middleware(AuthMiddleware(
+		handlers.NewGetGuildHandler(discordService), discordService)))
+	mux.Handle("OPTIONS /guild/{guild_id}", cors.NewOptionsHandler())
 
-	mux.Handle("GET /guilds", AuthMiddleware(handlers.NewGetGuildsHandler(discordService), discordService))
-	mux.Handle("OPTIONS /guilds", handlers.NewOptionsGuildsHandler())
+	mux.Handle("GET /guilds", cors.Middleware(AuthMiddleware(
+		handlers.NewGetGuildsHandler(discordService), discordService)))
+	mux.Handle("OPTIONS /guilds", cors.NewOptionsHandler())
 
-	mux.Handle("GET /topic/{topic_id}", handlers.NewGetTopicHandler(topicService, discordService))
+	mux.Handle("GET /topic/{topic_id}", cors.Middleware(AuthMiddleware(
+		handlers.NewGetTopicHandler(topicService, discordService), discordService)))
+	mux.Handle("OPTIONS /topic/{topic_id}", cors.NewOptionsHandler())
 
-	mux.Handle("GET /topics/{guild_id}", AuthMiddleware(handlers.NewGetTopicsHandler(topicService, discordService), discordService))
-	mux.Handle("OPTIONS /topics/{guild_id}", handlers.NewOptionsTopicsHandler())
+	mux.Handle("GET /topics/{guild_id}", cors.Middleware(AuthMiddleware(
+		handlers.NewGetTopicsHandler(topicService, discordService), discordService)))
+	mux.Handle("OPTIONS /topics/{guild_id}", cors.NewOptionsHandler())
 
-	mux.Handle("POST /topic", AuthMiddleware(handlers.NewPostTopicHandler(topicService, discordService), discordService))
-	mux.Handle("OPTIONS /topic", handlers.NewOptionsTopicHandler())
+	mux.Handle("POST /topic", cors.Middleware(AuthMiddleware(
+		handlers.NewPostTopicHandler(topicService, discordService), discordService)))
+	mux.Handle("OPTIONS /topic", cors.NewOptionsHandler())
 
 	httpServer := &http.Server{
 		Addr:         addr,

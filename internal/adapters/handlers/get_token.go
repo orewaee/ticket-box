@@ -18,8 +18,6 @@ func NewGetTokenHandler(discordService ports.DiscordService) *GetTokenHandler {
 
 // GET /token?code=abc...
 func (handler *GetTokenHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	code := request.URL.Query().Get("code")
 
 	token, err := handler.discordService.GetTokenByCode(code)

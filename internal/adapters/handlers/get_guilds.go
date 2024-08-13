@@ -20,8 +20,6 @@ func NewGetGuildsHandler(discordService ports.DiscordService) *GetGuildsHandler 
 
 // GET /guilds
 func (handler *GetGuildsHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	accessToken := request.Context().Value("accessToken").(string)
 
 	userGuilds, err := handler.discordService.GetCurrentUserGuilds(accessToken)

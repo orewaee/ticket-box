@@ -25,8 +25,6 @@ func NewPostTopicHandler(topicService ports.TopicService, discordService ports.D
 
 // POST /topic
 func (handler *PostTopicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-
 	accessToken := request.Context().Value("accessToken").(string)
 
 	bytes, err := io.ReadAll(request.Body)

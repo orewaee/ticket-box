@@ -43,6 +43,12 @@ export interface Topic {
     description: string
 }
 
+export interface TopicState {
+    topic: Topic | null
+    error: boolean
+    loading: boolean
+}
+
 export interface TopicsState {
     topics: Topic[] | null
     error: boolean

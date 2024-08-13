@@ -18,6 +18,8 @@ defineProps<{
 
 <style scoped lang="scss">
   .topic {
+    height: 100%;
+
     display: flex;
     flex-direction: column;
     gap: 12px;

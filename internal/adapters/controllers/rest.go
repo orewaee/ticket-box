@@ -33,6 +33,8 @@ func NewRestController(addr string, topicService ports.TopicService, discordServ
 
 	mux.Handle("GET /topic/{topic_id}", cors.Middleware(AuthMiddleware(
 		handlers.NewGetTopicHandler(topicService, discordService), discordService)))
+	mux.Handle("DELETE /topic/{topic_id}", cors.Middleware(AuthMiddleware(
+		handlers.NewDeleteTopicHandler(topicService, discordService), discordService)))
 	mux.Handle("OPTIONS /topic/{topic_id}", cors.NewOptionsHandler())
 
 	mux.Handle("GET /topics/{guild_id}", cors.Middleware(AuthMiddleware(

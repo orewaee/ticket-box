@@ -1,27 +1,25 @@
 package handlers
 
 import (
-	"encoding/json"
 	"github.com/orewaee/ticket-box/internal/app/ports"
-	"github.com/orewaee/ticket-box/internal/dto"
 	"github.com/orewaee/ticket-box/internal/utils"
 	"net/http"
 )
 
-type GetTopicHandler struct {
+type DeleteTopicHandler struct {
 	topicService   ports.TopicService
 	discordService ports.DiscordService
 }
 
-func NewGetTopicHandler(topicService ports.TopicService, discordService ports.DiscordService) *GetTopicHandler {
-	return &GetTopicHandler{
+func NewDeleteTopicHandler(topicService ports.TopicService, discordService ports.DiscordService) *DeleteTopicHandler {
+	return &DeleteTopicHandler{
 		topicService:   topicService,
 		discordService: discordService,
 	}
 }
 
-// GET /topic/{topic_id}
-func (handler *GetTopicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+// DELETE /topic/{topic_id}
+func (handler *DeleteTopicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	topicId := request.PathValue("topic_id")
 	if topicId == "" {
 		writer.WriteHeader(http.StatusBadRequest)
@@ -41,25 +39,15 @@ func (handler *GetTopicHandler) ServeHTTP(writer http.ResponseWriter, request *h
 
 	if !isAdmin {
 		writer.WriteHeader(http.StatusUnauthorized)
-		utils.WriteString(writer, "you can't get this guild's topic")
+		utils.WriteString(writer, "you can't delete this guild's topic")
 		return
 	}
 
-	data := &dto.Topic{
-		Id:          topic.Id,
-		GuildId:     topic.GuildId,
-		Emoji:       topic.Emoji,
-		Name:        topic.Name,
-		Description: topic.Description,
-	}
-
-	bytes, err := json.Marshal(data)
-	if err != nil {
+	if err := handler.topicService.RemoveTopicById(topicId); err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
-		utils.WriteString(writer, "error getting topics: "+err.Error())
+		utils.WriteString(writer, "failed to delete topic")
 		return
 	}
 
-	writer.Header().Set("Content-Type", "application/json")
-	utils.WriteBytes(writer, bytes)
+	writer.WriteHeader(http.StatusOK)
 }

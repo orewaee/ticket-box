@@ -17,7 +17,7 @@ type RestController struct {
 func NewRestController(addr string, topicService ports.TopicService, discordService ports.DiscordService) *RestController {
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /token", handlers.NewGetTokenHandler(discordService))
+	mux.Handle("GET /token", cors.Middleware(handlers.NewGetTokenHandler(discordService)))
 
 	mux.Handle("GET /user", cors.Middleware(AuthMiddleware(
 		handlers.NewGetUserHandler(discordService), discordService)))

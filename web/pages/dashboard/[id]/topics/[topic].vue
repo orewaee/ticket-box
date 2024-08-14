@@ -38,7 +38,7 @@ onMounted(async () => {
         <p class="inactive">/</p>
         <p class="active">{{topicState.emoji}} {{topicState.name}}</p>
       </div>
-      <div class="heading">
+      <div v-if="!topicState.error" class="heading">
         <h1>Topic</h1>
         <button @click="topicsState.removeTopicById(topicState.id); topicState.reset(); navigateTo('/dashboard/' + guildState.id + '/topics');">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red-500-100)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
@@ -52,6 +52,7 @@ onMounted(async () => {
           Delete
         </button>
       </div>
+      <Error v-if="topicState.error" message="Failed to load topic" class="error" />
     </div>
   </AuthLayout>
 </template>
@@ -66,6 +67,10 @@ onMounted(async () => {
 
   margin: 0 auto;
   padding: 24px;
+
+  .error {
+    height: auto;
+  }
 
   .breadcrumbs {
     display: flex;

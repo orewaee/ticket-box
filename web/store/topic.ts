@@ -34,6 +34,11 @@ export const useTopicState = defineStore("topic", {
             } finally {
                 this.loading = false;
             }
+        },
+        async reset() {
+            this.topic = null
+            this.error = false
+            this.loading = true
         }
     }
 });

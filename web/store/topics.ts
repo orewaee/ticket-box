@@ -45,6 +45,23 @@ export const useTopicsState = defineStore("topics", {
             } catch (error) {
 
             }
-        }
+        },
+        async removeTopicById(topicId: string) {
+            try {
+                await axios({
+                    method: "DELETE",
+                    url: baseUrl + "/topic/" + topicId,
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+
+                this.topics = (this.topics != null ? this.topics : []).filter(topic => topic.id != topicId)
+
+                this.error = false;
+            } catch (error) {
+
+            }
+        },
     }
 });

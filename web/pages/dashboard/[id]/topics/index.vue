@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type {Guild, Topic} from "@/store/types";
 import AuthLayout from "@/layouts/AuthLayout.vue";
-import LoadingLayout from "@/layouts/LoadingLayout.vue";
 import {useGuildState, useUserState, useTopicsState} from "@/store";
 import type {Ref} from "vue";
-import axios from "axios";
 
 const route = useRoute();
 

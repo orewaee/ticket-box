@@ -42,6 +42,10 @@ body {
 
   --accent: #5865F2;
 
+  --red-500-100: #ED4245;
+  --red-500-40: rgba(237, 66, 69, .4);
+  --red-500-20: rgba(237, 66, 69, .2);
+
   background-color: var(--background-500);
 
   h1, h2, h3, h4, h5, h6, p, span, a, small, strong, input, button {

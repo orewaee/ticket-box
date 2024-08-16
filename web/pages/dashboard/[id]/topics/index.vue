@@ -26,7 +26,7 @@ onMounted(async () => {
 
 <template>
   <AuthLayout>
-    <MyHeader :guild="guildState.guild as Guild" :avatar-url="userState.avatarUrl" />
+    <MyHeader :guild="guildState.guild as Guild" :avatar-url="userState.avatarUrl + ''" />
     <div class="container">
       <div class="breadcrumbs">
         <NuxtLink to="/dashboard" class="inactive">
@@ -43,12 +43,13 @@ onMounted(async () => {
         <h1>Topics</h1>
         <button @click="modal = true">Create</button>
       </div>
-      <TransitionGroup tag="div" name="fade" class="topics">
+      <Error v-if="topicsState.topics?.length == 0" message="There are no topics here yet" class="error" />
+      <TransitionGroup v-else tag="div" name="fade" class="topics">
         <NuxtLink class="link" v-for="(topic, i) in topicsState.topics as Topic[]" :to="'/dashboard/' + guildState.id + '/topics/' + topic.id" :key="i">
           <Topic
-              :emoji="topic.emoji"
-              :name="topic.name"
-              :description="topic.description"
+            :emoji="topic.emoji"
+            :name="topic.name"
+            :description="topic.description"
           />
         </NuxtLink>
       </TransitionGroup>
@@ -71,7 +72,7 @@ onMounted(async () => {
           </div>
           <div class="actions">
             <button class="inactive" @click="modal = false;">Cancel</button>
-            <button class="active" @click="topicsState.createTopic(guildState.id, emoji, name, description); modal = false;">Create</button>
+            <button class="active" @click="topicsState.createTopic(guildState.id + '', emoji, name, description); modal = false;">Create</button>
           </div>
         </div>
       </div>
@@ -243,6 +244,10 @@ onMounted(async () => {
 
   margin: 0 auto;
   padding: 24px;
+
+  .error {
+    height: auto;
+  }
 
   .breadcrumbs {
     display: flex;

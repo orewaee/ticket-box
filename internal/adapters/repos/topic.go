@@ -41,6 +41,28 @@ func (repo *TopicRepo) ReadTopicsByGuildId(guildId string) ([]*domain.Topic, err
 	return topics, nil
 }
 
+func (repo *TopicRepo) UpdateTopicById(id, emoji, name, description string) error {
+	for i, topic := range repo.topics {
+		if topic.Id == id {
+			if emoji != "" {
+				repo.topics[i].Emoji = emoji
+			}
+
+			if name != "" {
+				repo.topics[i].Name = name
+			}
+
+			if description != "" {
+				repo.topics[i].Description = description
+			}
+
+			return nil
+		}
+	}
+
+	return errors.New("topic not found")
+}
+
 func (repo *TopicRepo) DeleteTopicById(id string) error {
 	for i, topic := range repo.topics {
 		if topic.Id == id {

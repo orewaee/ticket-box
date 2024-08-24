@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type ApiBridge struct {
@@ -19,7 +20,9 @@ type ApiBridge struct {
 
 func NewApiBridge() *ApiBridge {
 	return &ApiBridge{
-		httpClient: &http.Client{},
+		httpClient: &http.Client{
+			Timeout: time.Second * 5,
+		},
 	}
 }
 

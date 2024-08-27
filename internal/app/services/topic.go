@@ -44,6 +44,19 @@ func (service *TopicService) GetTopicsByGuildId(guildId string) ([]*domain.Topic
 	return topics, nil
 }
 
+func (service *TopicService) SetTopicEmoji(id, emoji string) error {
+	return service.topicRepo.UpdateTopicById(id, emoji, "", "")
+}
+
+func (service *TopicService) SetTopicName(id, name string) error {
+	return service.topicRepo.UpdateTopicById(id, "", name, "")
+}
+
+func (service *TopicService) SetTopicDescription(id, description string) error {
+	return service.topicRepo.UpdateTopicById(id, "", "", description)
+
+}
+
 func (service *TopicService) RemoveTopicById(id string) error {
 	if err := service.topicRepo.DeleteTopicById(id); err != nil {
 		return err

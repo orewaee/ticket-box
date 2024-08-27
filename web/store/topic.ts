@@ -39,6 +39,24 @@ export const useTopicState = defineStore("topic", {
             this.topic = null
             this.error = false
             this.loading = true
+        },
+        async updateTopic(topicId: string, emoji: string, name: string, description: string) {
+            try {
+                const {data} = await axios<Topic>({
+                    method: "PATCH",
+                    url: baseUrl + "/topic/" + topicId,
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    },
+                    data: {emoji, name, description}
+                })
+
+                this.topic = data;
+
+                this.error = false;
+            } catch (error) {
+
+            }
         }
     }
 });

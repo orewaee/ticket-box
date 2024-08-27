@@ -60,5 +60,14 @@ body {
 
     line-height: 48px;
   }
+
+  h2 {
+    font: {
+      size: 24px;
+      weight: 500;
+    };
+
+    line-height: 32px;
+  }
 }
 </style>

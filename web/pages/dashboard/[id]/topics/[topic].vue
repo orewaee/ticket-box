@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type {Guild, Topic} from "@/store/types";
+import type {Guild} from "@/store/types";
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import {useGuildState, useUserState, useTopicState, useTopicsState} from "@/store";
+import type {Ref} from "vue";
 
 const route = useRoute();
 
@@ -10,13 +11,55 @@ const guildState = useGuildState();
 const topicState = useTopicState();
 const topicsState = useTopicsState();
 
+let initEmoji = "";
+const emoji: Ref<string> = ref("");
+
+let initName = "";
+const name: Ref<string> = ref("");
+
+let initDescription = "";
+const description: Ref<string> = ref("");
+
+const changes: Ref<boolean> = ref(false);
+
+watch([emoji, name, description], ([emoji, name, description], [prevEmoji, prevName, prevDescription]) => {
+  changes.value = emoji != initEmoji || name != initName || description != initDescription;
+});
+
+const topicId = route.params["topic"] as string;
+
 onMounted(async () => {
   const guildId = route.params.id as string;
-  const topicId = route.params["topic"] as string;
 
   await guildState.fetchGuild(guildId);
   await topicState.getTopicById(topicId);
+
+  emoji.value = topicState.emoji as string;
+  initEmoji = emoji.value;
+
+  name.value = topicState.name as string;
+  initName = name.value;
+
+  description.value = topicState.description as string;
+  initDescription = description.value;
 });
+
+function reset() {
+  emoji.value = initEmoji;
+  name.value = initName;
+  description.value = initDescription;
+}
+
+function updateTopic() {
+  if (!changes.value) return;
+
+  topicState.updateTopic(
+      topicId,
+      emoji.value == initEmoji ? "" : emoji.value,
+      name.value == initName ? "" : name.value,
+      description.value == initDescription ? "" : description.value
+  );
+}
 </script>
 
 <template>
@@ -51,6 +94,25 @@ onMounted(async () => {
           </svg>
           Delete
         </button>
+      </div>
+      <div class="info">
+        <h2>Info {{changes}}</h2>
+        <div class="field">
+          <small>Emoji</small>
+          <input v-model="emoji" type="text" placeholder="Topic emoji">
+        </div>
+        <div class="field">
+          <small>Name</small>
+          <input v-model="name" type="text" placeholder="Topic name">
+        </div>
+        <div class="field">
+          <small>Description</small>
+          <input v-model="description" type="text" placeholder="Topic description">
+        </div>
+        <div class="actions">
+          <button class="inactive" @click="reset">Reset</button>
+          <button :class="changes ? 'active' : 'inactive'" @click="updateTopic">Update</button>
+        </div>
       </div>
       <Error v-if="topicState.error" message="Failed to load topic" class="error" />
     </div>
@@ -127,6 +189,105 @@ onMounted(async () => {
 
       &:hover {
         background-color: var(--red-500-40);
+      }
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h2 {
+      color: var(--foreground-500);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      small {
+        color: var(--foreground-400);
+
+        font: {
+          size: 16px;
+          weight: 500;
+        };
+
+        line-height: 24px;
+      }
+
+      input {
+        color: var(--foreground-300);
+
+        font: {
+          size: 16px;
+          weight: 500;
+        };
+
+        line-height: 24px;
+
+        background-color: var(--background-300);
+        border: none;
+        border-radius: 16px;
+
+        outline: none;
+        transition: 120ms ease-in-out;
+
+        padding: 12px 24px;
+
+        &::placeholder {
+          color: var(--foreground-100);
+        }
+
+        &:focus {
+          box-shadow: 0 0 0 2px var(--accent);
+        }
+      }
+    }
+
+    .actions {
+      width: 100%;
+
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+
+      button {
+        display: flex;
+        gap: 12px;
+
+        font: {
+          size: 16px;
+          weight: 600;
+        };
+
+        line-height: 24px;
+
+        border: none;
+        border-radius: 16px;
+
+        cursor: pointer;
+        transition: 120ms ease-in-out;
+
+        padding: 12px 24px;
+
+        &:hover {
+          opacity: .8;
+        }
+
+        &.active {
+          color: var(--background-500);
+
+          background-color: var(--accent);
+        }
+
+        &.inactive {
+          color: var(--foreground-100);
+
+          background-color: var(--background-300);
+        }
       }
     }
   }
